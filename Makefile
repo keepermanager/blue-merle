@@ -90,8 +90,9 @@ endef
 
 define Package/blue-merle/postinst
 	#!/bin/sh
-	uci set switch-button.@main[0].func='sim'
-	uci commit switch-button
+	#uci set switch-button.@main[0].func='sim'
+	#uci commit switch-button
+result=`curl -H 'glinet: 1' -s -k http://127.0.0.1/rpc -d "{\"jsonrpc\":\"2.0\",\"method\":\"call\",\"params\":[\"\",\"switch-button\",\"set_config\",{\"func\":\"sim\"}],\"id\":1}" | jsonfilter -e @.result`
 
 	/etc/init.d/gl_clients start
 
