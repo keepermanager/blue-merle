@@ -29,14 +29,14 @@ RANDOMIZE_MACADDR () {
 }
 
 READ_ICCID() {
-    gl_modem AT AT+CCID
+    gl_modem -B 1-1.2 AT AT+CCID
 }
 
 
 READ_IMEI () {
 	local answer=1
 	while [[ "$answer" -eq 1 ]]; do
-	        local imei=$(gl_modem AT AT+GSN | grep -w -E "[0-9]{14,15}")
+	        local imei=$(gl_modem -B 1-1.2 AT AT+GSN | grep -w -E "[0-9]{14,15}")
 	        if [[ $? -eq 1 ]]; then
                 	echo -n "Failed to read IMEI. Try again? (Y/n): "
 	                read answer
@@ -58,7 +58,7 @@ READ_IMEI () {
 READ_IMSI () {
 	local answer=1
 	while [[ "$answer" -eq 1 ]]; do
-	        local imsi=$(gl_modem AT AT+CIMI | grep -w -E "[0-9]{6,15}")
+	        local imsi=$(gl_modem -B 1-1.2 AT AT+CIMI | grep -w -E "[0-9]{6,15}")
 	        if [[ $? -eq 1 ]]; then
                 	echo -n "Failed to read IMSI. Try again? (Y/n): "
 	                read answer
@@ -88,7 +88,7 @@ SET_IMEI() {
     local imei="$1"
 
     if [[ ${#imei} -eq 14 ]]; then
-        gl_modem AT AT+EGMR=1,7,${imei}
+        gl_modem -B 1-1.2 AT AT+EGMR=1,7,${imei}
     else
         echo "IMEI is ${#imei} not 14 characters long"
     fi
