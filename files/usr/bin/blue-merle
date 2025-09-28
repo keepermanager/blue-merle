@@ -27,7 +27,7 @@ old_imsi=$(READ_IMSI)
 
 answer=1
 while [[ "$answer" -eq 1 ]]; do
-	gl_modem AT AT+CFUN=4 | grep -q OK
+	gl_modem -B 1-1.2 AT AT+CFUN=4 | grep -q OK
 	if [[ $? -eq 1 ]]; then
 		echo -n "...failed. Try again? (Y/n): "
 		read answer
@@ -57,13 +57,13 @@ read answer
 
 leak=0
 
-until gl_modem AT AT+CFUN=0 | grep -q OK
+until gl_modem -B 1-1.2 AT AT+CFUN=0 | grep -q OK
 do
 	sleep 1
 	echo "CFUN=0 failed. Trying again."
 done
 
-until gl_modem AT AT+CFUN=4 | grep -q OK
+until gl_modem -B 1-1.2 AT AT+CFUN=4 | grep -q OK
 do
 	leak=1
 	echo "CFUN=4 failed. Trying again."
@@ -127,14 +127,14 @@ if [[ "$answer" -eq 1 ]]; then
     echo '{ "poweroff": "1" }' > /dev/ttyS0
 else
 	echo "Resetting modem..."
-	until gl_modem AT AT+QPOWD | grep -q OK
+	until gl_modem -B 1-1.2 AT AT+QPOWD | grep -q OK
 	do
 		echo "Resetting modem failed. Trying again."
 		sleep 1
 	done 
 	
 	time_start=$(date +%s)
-	until imsi=$(gl_modem AT AT+CIMI | grep -w -E "[0-9]{6,15}")
+	until imsi=$(gl_modem -B 1-1.2 AT AT+CIMI | grep -w -E "[0-9]{6,15}")
 	do
 		time_now=$(date +%s)
 		echo -ne "Waiting for reset to complete. ($(($time_now-$time_start))s/30s)\r"
